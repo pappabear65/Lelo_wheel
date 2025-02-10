@@ -1,0 +1,86 @@
+pico IO:
+	reed_1_speed # tied low through internal resistor, input used to see when reed switch 1 has been closed
+	reed_2_direction # tied low through internal resistor, input used to see when reed switch 2 has been closed
+	reed_1_power # provides power to one side of reed switch 1
+	reed_2_power # provides power to one side of reed switch 2
+	power_lamp # currently used as activity lamp - reed 1 interupt turns on, reed 2 interupt turns off
+
+assigned variables:
+	sleeptime = 0.5 # too give time to read when each initialization section has been completed
+	dist_cm = 86 # inner circumfrence of wheel in centmeters
+	dist_m = 0.86 # inner circumfrence of wheel in meters
+	dist_km = 0.00086 # inner circumfrence of wheel in kilometers
+	milisec_sec = 0.001 # number of miliseconds in 1 second
+	milisec_hr = 2.78e-7 # number of miliseconds in 1 hour
+	rnd_dig = 3 # rounds the speeds to 3 digits after decimal
+    session_end = 5000 # if wheel is not turned for 5 seconds, call session ended, reset rotation counts and increment session count by 1.
+                        # must incorporate the reset of the session at a given time each day allowing a new count for the new day.
+	reed_1_trigger_time # each reed 1 trigger gets time from time.ticks_ms() 
+	reed_1_trigger_time_last # each reed 1 trigger gets time from reed_1_trigger_time before it is assigned new time
+	reed_2_trigger_time # each reed 2 trigger gets time from time.ticks_ms()
+	reed_2_trigger_time_last # each reed 2 trigger gets time from reed_1_trigger_time before it is assigned new time
+	loc_date # date and time set from NTP every time the system boots as no battery backup or external RTC)
+	loc_time # date and time set from NTP every time the system boots as no battery backup or external RTC)
+	file1 # assigned to the "hamster_wheel_data.csv" file name
+    nowebclient # used for enabling or disabling the web push client set up for testing.  0 web client enabled, 1 web client disabled.
+
+calculateed variables:
+	reed_1_trigger_time_diff # the difference between the current reed 1 trigger time and the last reed 1 trigger time.ticks_diff(reed_1_trigger_time, reed_1_trigger_time_last)
+	session_rotation_direction # uses the reed 1 and 2 rotation count each reed 2 trigger , reed1 < reed 2 is counter clockwise else clockwise.
+    distance_meters # session_rotation_count_reed_1 * dist_m
+    distance_kilometers # session_rotation_count_reed_1 * dist_km
+	
+counter variables:
+	session_count # counts number of sessions in a 24 hour period
+	session_rotation_count_reed_1 # counts every rotation of reed 1 in a session, resets to 0 when session is over
+	session_rotation_count_reed_2 # counts every rotation of reed 2 in a session, resets to 0 when session is over
+    session_end = 2500 # 2,5 seconds, used to determin the end of a session.
+    session_end_flag = 0 # if session is determined over, set this flag to 1 the session end count is not increased each time
+                        # and the session counter knows when a new one has started (flag turns back to 0 once new starts)
+	
+	
+file1.write order:
+	reed # "reed_1", "reed_2" or "startup"
+	str(loc_date)
+	str(loc_time) 
+	status # "start_session", "power on", "in session" or "end session" 
+	str(session_count) 
+	str(session_rotation_count_reed_1) 
+	str(session_rotation_count_reed_2) 
+	str(session_rotation_direction)
+	str(reed_1_trigger_time) 
+	str(reed_1_trigger_time_last) 
+	str(reed_1_trigger_time_diff)
+	str(reed_2_trigger_time) 
+	str(reed_2_trigger_time_last) 
+	str(speed_mps)
+    str(distance_meters)
+	str(speed_kph)
+    str(distance_kilometers)
+	
+#####
+#variables in the web calculation and setting of NTP are not listed yet
+#####
+	
+    
+#             document.getElementById("speed_mps").innerText = event.data;
+#             document.getElementById("distance_meters").innerText = event.data;
+#             document.getElementById("distance_kilometers").innerText = event.data; 
+
+#             document.getElementById("speed_mps").innerText = 'Connection closed';
+#             document.getElementById("distance_meters").innerText = 'Connection closed';
+#             document.getElementById("distance_kilometers").innerText = 'Connection closed';
+
+#             document.getElementById("speed_mps").innerText = 'WebSocket error';
+#             document.getElementById("distance_meters").innerText = 'WebSocket error';
+#             document.getElementById("distance_kilometers").innerText = 'WebSocket error';
+
+
+
+
+	
+	
+	
+	
+	
+	
